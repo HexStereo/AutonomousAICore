@@ -9,7 +9,7 @@ echo ======================================================================
 echo    AUTONOMOUS AI CORE (AIC) - HIGH PERFORMANCE DEEP LEARNING CORE
 echo    NVIDIA RTX 5090 Blackwell (sm_120) ^| Intel Core Ultra 9 285HX
 echo ======================================================================
-echo.
+echo  [G] Launch Modern Desktop GUI Studio (Royal Purple / Pearl / Black)
 echo  [1] Launch Production Async HTTP ^& SSE Streaming Server (Port 8080)
 echo  [2] Run Hardware GEMM Benchmark (AVX2 vs Blackwell sm_120)
 echo  [3] Run FlashAttention-2 vs Standard Attention Benchmark
@@ -22,7 +22,12 @@ echo  [9] Run Interactive AIC Shell (Help ^& Custom Commands)
 echo  [0] Exit
 echo.
 echo ======================================================================
-set /p choice="Seciminizi yapin [0-9]: "
+set /p choice="Seciminizi yapin [G / 0-9]: "
+
+if /i "%choice%"=="G" (
+    start "" Launch_AIC_Studio.bat
+    goto MENU
+)
 
 if "%choice%"=="1" (
     echo.

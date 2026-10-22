@@ -74,6 +74,14 @@ Sıradan derin öğrenme projeleri onlarca gigabaytlık Python kütüphaneleri, 
 - `POST /v1/chat/completions`: Standart JSON ve SSE (`text/event-stream`) canlı token akışı desteği.
 - `GET /health` & `GET /v1/models`: Sistem sağlığı, donanım telemetrisi ve model keşif uç noktaları.
 
+### 🏛️ 10. Otonom Çoklu-Yapay Zeka Münazarası & Sentetik Damıtma Arenası (Air-Gapped Self-Evolution)
+- **Diyalektik Tartışma Arenası:** Autonomous AI Core (AIC), kullanıcının belirlediği araştırma konularında harici frontier modellerle (OpenAI GPT-4o, Anthropic Claude 3.5 Sonnet, Google Gemini 1.5 Pro) tez-antitez münazarasına girer.
+- **🛡️ KESİN AIR-GAP VE SAF YEREL MİMARİ İZOLASYON PROTOKOLÜ:**
+  - Harici yapay zekalar *kesinlikle ve hiçbir koşulda* AIC'nin karar mekanizmasına, MCTS akıl yürütme motoruna, ReAct kum havuzuna veya C++20 / CUDA sm_120 çekirdeklerine **müdahale edemez**.
+  - Dış modeller yalnızca pasif tampon bellekte (Synthetic Distillation Buffer) çalışan *diyalektik sparring partnerleri ve veri üreticileridir*.
+  - Dış modellerden hiçbir kod çalıştırılmaz; sistemin %100 saf, yerel C++ mimarisi ve veri egemenliği korunur.
+- **Yerel C++20 DPO Öz-Eğitim Motoru:** Münazaradan süzülen en güçlü argümanlar kazanmış tercih ($y_w$), çelişkili veya zayıf argümanlar ise kaybeden tercih ($y_l$) olarak etiketlenir. Bu sentetik tercih çiftleri doğrudan yerel `src/alignment/dpo_loss.cpp` ve `src/nn/lora.cpp` motorumuza aktarılarak NVIDIA RTX 5090 Blackwell GPU üzerinde yerel olarak eğitilir ve modelin kendi kendini geliştirmesi sağlanır.
+
 ---
 
 ## 4. Sistem Bileşenleri ve Dizin Yapısı

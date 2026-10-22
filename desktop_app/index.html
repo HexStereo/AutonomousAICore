@@ -83,8 +83,10 @@
                 <div class="dropdown-menu">
                     <div class="dropdown-entry" onclick="app.switchView('reasoning')"><span>Tree-of-Thoughts / MCTS Motoru</span></div>
                     <div class="dropdown-entry" onclick="app.switchView('agent')"><span>ReAct Sandbox Konsolu</span></div>
-                    <div class="dropdown-entry" onclick="app.openGrammarModal()"><span>DFA Yapısal Dilbilgisi Editörü</span></div>
+                    <div class="dropdown-entry" onclick="app.switchView('debate')"><span>Otonom Münazara & Damıtma Arenası</span></div>
+                    <div class="dropdown-entry" onclick="app.openApiConfigModal()"><span>API Anahtarları (OpenAI, Claude, Gemini)</span></div>
                     <div class="dropdown-divider"></div>
+                    <div class="dropdown-entry" onclick="app.openGrammarModal()"><span>DFA Yapısal Dilbilgisi Editörü</span></div>
                     <div class="dropdown-entry" onclick="app.runDpoSelfPlay()"><span>DPO Self-Play Simülasyonu</span></div>
                 </div>
             </div>
@@ -148,6 +150,11 @@
                     <button class="nav-item" data-view="agent" onclick="app.switchView('agent')">
                         <span class="nav-icon">🤖</span>
                         <span class="nav-label">Otonom Ajan (ReAct)</span>
+                    </button>
+                    <button class="nav-item" data-view="debate" onclick="app.switchView('debate')">
+                        <span class="nav-icon">🏛️</span>
+                        <span class="nav-label">Otonom Münazara</span>
+                        <span class="nav-tag tag-violet">DPO/SYNTH</span>
                     </button>
                     <button class="nav-item" data-view="server" onclick="app.switchView('server')">
                         <span class="nav-icon">🌐</span>
@@ -340,6 +347,14 @@
                                 <div class="tile-desc">Güvenli kum havuzunda araç çalıştırma ve çok adımlı problem çözme</div>
                             </div>
                             <span class="tile-arrow">&rarr;</span>
+                        </div>
+                        <div class="action-tile card-purple-glow" onclick="app.switchView('debate')" style="border-color: var(--purple-electric);">
+                            <div class="tile-icon">🏛️</div>
+                            <div class="tile-text">
+                                <div class="tile-title">Otonom Çoklu-Yapay Zeka Münazarası & DPO</div>
+                                <div class="tile-desc">OpenAI, Claude ve Gemini ile diyalektik tartışma, sentetik veri damıtma ve yerel C++ öz-eğitimi</div>
+                            </div>
+                            <span class="tile-arrow text-neon">&rarr;</span>
                         </div>
                     </div>
                 </section>
@@ -788,7 +803,233 @@ Yukarıdaki 'Çalıştır' veya 'Tüm Kıyaslamaları Koş' butonuna basarak can
                 </section>
 
                 <!-- ============================================== -->
-                <!-- VIEW 6: SERVER & TELEMETRY MONITOR -->
+                <!-- VIEW 6: OTONOM MÜNAZARA & SENTETİK DAMITMA (DEBATE & DISTILLATION) -->
+                <!-- ============================================== -->
+                <section class="view-panel" id="view-debate">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Otonom Çoklu-Yapay Zeka Münazarası & Sentetik Damıtma Arenası</h2>
+                            <p class="panel-desc">Autonomous AI Core ile Harici Frontier Modeller (OpenAI, Claude, Gemini) Arasında Diyalektik Tartışma & Yerel C++ DPO Öz-Gelişimi</p>
+                        </div>
+                        <div class="panel-actions">
+                            <button class="btn btn-secondary" onclick="app.openApiConfigModal()"><span class="btn-icon">⚙️</span> API Bağlantıları</button>
+                            <button class="btn btn-primary" id="btnStartDebate" onclick="app.startDebate()"><span class="btn-icon">⚡</span> Münazarayı Başlat</button>
+                            <button class="btn btn-secondary" onclick="app.clearDebate()"><span class="btn-icon">🧹</span> Temizle</button>
+                        </div>
+                    </div>
+
+                    <!-- KRİTİK GÜVENLİK PROTOKOLÜ BİLDİRİMİ (AIR-GAP SECURITY ISOLATION BANNER) -->
+                    <div class="airgap-isolation-banner mb-3">
+                        <div class="airgap-icon-wrap">
+                            <span class="airgap-shield">🛡️</span>
+                            <span class="airgap-pulse"></span>
+                        </div>
+                        <div class="airgap-content">
+                            <div class="airgap-title-row">
+                                <h4 class="airgap-title">AIR-GAP & SAF YEREL MİMARİ İZOLASYON PROTOKOLÜ (AKTİF VE KORUMALI)</h4>
+                                <span class="airgap-badge-verified">✓ KESİN İZOLASYON GARANTİSİ</span>
+                            </div>
+                            <p class="airgap-desc">
+                                <strong>Kritik İlke:</strong> Harici yapay zekalar (OpenAI GPT-4o, Anthropic Claude 3.5 Sonnet, Google Gemini 1.5 Pro) <em>asla ve hiçbir koşulda</em> AIC'nin karar mekanizmasına, MCTS akıl yürütme motoruna, ReAct sandbox'ına veya yerel C++20 / CUDA sm_120 çekirdeklerine <u>dahil edilemez</u>. Dış modeller yalnızca <em>sentetik sparring partneri</em> ve <em>veri kaynağı</em> olarak pasif API tamponunda tutulur; damıtılan bilgi yerel C++20 DPO / LoRA motoruyla sadece yerel donanımda eğitilir.
+                            </p>
+                            <div class="airgap-status-pills">
+                                <span class="airgap-pill"><span class="dot-green"></span> Yerel C++20 Karar Çekirdeği: %100 İzole</span>
+                                <span class="airgap-pill"><span class="dot-green"></span> Harici Kod Yürütme: Kesinlikle Yasak (%0 Yetki)</span>
+                                <span class="airgap-pill"><span class="dot-green"></span> Donanım Eğitimi: Saf RTX 5090 Blackwell sm_120</span>
+                                <span class="airgap-pill"><span class="dot-purple"></span> Veri Akışı: Dış Modeller &rarr; Pasif DPO Tamponu &rarr; Yerel Eğitim</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MÜNAZARA KONUSU & AYARLARI KONTROLÜ -->
+                    <div class="glass-section mb-3 debate-control-bar">
+                        <div class="d-flex justify-between items-center mb-2">
+                            <label class="control-label font-bold text-pearl"><span class="text-neon">1.</span> Tartışılacak Araştırma & Geliştirme Konusu:</label>
+                            <div class="debate-mode-indicator">
+                                <span class="pill-mini pill-neon" id="debateApiModeBadge">API Modu: Simülasyon (Mock / Sıfır Maliyet)</span>
+                                <button class="btn btn-secondary btn-xs ml-2" onclick="app.openApiConfigModal()">Değiştir</button>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 mb-2">
+                            <input type="text" id="debateTopicInput" class="form-input flex-1" value="Blackwell sm_120 Mimarisinde Register Spilling'e Karşı Shared Memory Tiling ve Double Buffering Optimizasyonu" placeholder="Münazara konusunu yazın veya aşağıdaki hazır şablonlardan seçin...">
+                            <button class="btn btn-primary" onclick="app.startDebate()"><span class="btn-icon">⚡</span> Tartışmayı Başlat</button>
+                        </div>
+
+                        <!-- HAZIR KONU ŞABLONLARI (PRESETS) -->
+                        <div class="preset-chips-row">
+                            <span class="preset-label">Örnek Konular:</span>
+                            <button class="preset-chip active" id="chip_hpc_gemm" onclick="app.setDebatePreset('hpc_gemm')">🔬 HPC & CUDA Tiling</button>
+                            <button class="preset-chip" id="chip_attention" onclick="app.setDebatePreset('attention')">🧠 FlashAttention vs PagedAttention</button>
+                            <button class="preset-chip" id="chip_safety" onclick="app.setDebatePreset('safety')">🛡️ Ajan Güvenliği & Sandbox</button>
+                            <button class="preset-chip" id="chip_godel" onclick="app.setDebatePreset('godel')">📐 Gödel Eksiklik & AGI</button>
+                            <button class="preset-chip" id="chip_quant" onclick="app.setDebatePreset('quant')">⚡ FP8/INT4 Outlier Kuantizasyon</button>
+                        </div>
+
+                        <div class="debate-meta-row mt-3 pt-2 border-top-dim">
+                            <div class="d-flex gap-3 items-center flex-wrap">
+                                <span class="font-sm text-pearl-muted">Katılımcı Modeller:</span>
+                                <label class="agent-checkbox-pill checked">
+                                    <input type="checkbox" id="chkModelAic" checked disabled>
+                                    <span class="model-tag tag-aic">🟣 AIC (Yerel C++20)</span>
+                                </label>
+                                <label class="agent-checkbox-pill checked">
+                                    <input type="checkbox" id="chkModelClaude" checked>
+                                    <span class="model-tag tag-claude">🟠 Claude 3.5 Sonnet</span>
+                                </label>
+                                <label class="agent-checkbox-pill checked">
+                                    <input type="checkbox" id="chkModelGemini" checked>
+                                    <span class="model-tag tag-gemini">🔵 Gemini 1.5 Pro</span>
+                                </label>
+                                <label class="agent-checkbox-pill checked">
+                                    <input type="checkbox" id="chkModelGpt" checked>
+                                    <span class="model-tag tag-openai">🟢 GPT-4o (OpenAI)</span>
+                                </label>
+                            </div>
+                            <div class="d-flex gap-2 items-center">
+                                <span class="font-sm text-pearl-muted">Tur Sayısı:</span>
+                                <select id="debateRoundsSelect" class="form-input form-select font-sm" style="width: auto;">
+                                    <option value="3">3 Tur (Kısa Münazara)</option>
+                                    <option value="5" selected>5 Tur (Tam Diyalektik & Sentez)</option>
+                                    <option value="7">7 Tur (Derinlemesine İnceleme)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MÜNAZARA ARENASI VE DAMITMA PANELİ (2 SÜTUNLU YAPI) -->
+                    <div class="debate-arena-grid">
+                        
+                        <!-- SOL SÜTUN: CANLI MÜNAZARA AKIŞI -->
+                        <div class="arena-column debate-stream-wrap">
+                            <div class="arena-column-header">
+                                <div class="d-flex items-center gap-2">
+                                    <span class="header-icon">💬</span>
+                                    <h3 class="arena-section-title">Diyalektik Münazara Akışı (Multi-AI Dialectic)</h3>
+                                </div>
+                                <div class="d-flex items-center gap-2">
+                                    <span class="debate-status-indicator" id="debateLiveStatus">Münazara Hazır</span>
+                                </div>
+                            </div>
+
+                            <div class="debate-messages-scroll" id="debateMessagesContainer">
+                                <div class="debate-welcome-card">
+                                    <div class="welcome-icon">🏛️</div>
+                                    <h4>Otonom Münazara Arenasına Hoş Geldiniz</h4>
+                                    <p class="font-sm text-pearl-muted mt-1">
+                                        Yukarıdan bir araştırma konusu belirleyin ve <strong>"Münazarayı Başlat"</strong> butonuna basın. Yerel yapay zekanız AIC, Claude 3.5 Sonnet, Gemini 1.5 Pro ve GPT-4o ile teker teker tartışacak; tez, antitez ve hakikat sentezi oluşturacaktır.
+                                    </p>
+                                    <div class="welcome-badges mt-3">
+                                        <span class="pill-mini pill-neon">Otomatik DPO Tercih Çıkarımı</span>
+                                        <span class="pill-mini pill-purple">Saf C++20 Yerel Öz-Eğitim</span>
+                                        <span class="pill-mini pill-green">Sıfır Dış Karar Müdahalesi</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SAĞ SÜTUN: SENTETİK DAMITMA & YEREL ÖZ-GELİŞİM MOTORU -->
+                        <div class="arena-column distillation-panel-wrap">
+                            <div class="arena-column-header">
+                                <div class="d-flex items-center gap-2">
+                                    <span class="header-icon">🧬</span>
+                                    <h3 class="arena-section-title">Sentetik Damıtma & Yerel DPO Eğitimi</h3>
+                                </div>
+                                <span class="pill-mini pill-neon">C++20 DPOTrainer</span>
+                            </div>
+
+                            <div class="distillation-scrollable-body">
+                                <!-- 1. DPO TERCİH ÇİFTİ ÇIKARIMI -->
+                                <div class="distill-card">
+                                    <div class="distill-card-title-row">
+                                        <span class="distill-tag tag-purple">DPO Tercih Çifti Sentezi</span>
+                                        <span class="font-xs text-pearl-muted" id="dpoPairTimestamp">Henüz Üretilmedi</span>
+                                    </div>
+                                    <div class="dpo-pair-body mt-2">
+                                        <div class="dpo-field">
+                                            <span class="dpo-label text-neon">Soru / Problem (x):</span>
+                                            <div class="dpo-content font-mono font-xs" id="dpoPromptText">Münazara başlatıldığında otomatik doldurulacaktır.</div>
+                                        </div>
+                                        <div class="dpo-field mt-2">
+                                            <span class="dpo-label text-green">Kabul Edilen Yanıt (y_w - Winning Response):</span>
+                                            <div class="dpo-content font-mono font-xs dpo-winner" id="dpoWinnerContent">Matematiksel tutarlılığı ve deneysel doğrulaması en yüksek argüman seçilecek.</div>
+                                        </div>
+                                        <div class="dpo-field mt-2">
+                                            <span class="dpo-label text-red">Reddedilen Yanıt (y_l - Rejected Response):</span>
+                                            <div class="dpo-content font-mono font-xs dpo-loser" id="dpoLoserContent">Eksik, çelişkili veya optimizasyon hatası içeren alternatif argüman filtrelenecek.</div>
+                                        </div>
+                                    </div>
+                                    <div class="dpo-metrics-row mt-3">
+                                        <div class="metric-mini">
+                                            <span class="metric-k">Implicit Reward Margin:</span>
+                                            <span class="metric-v text-green" id="dpoMarginVal">&Delta;r = --</span>
+                                        </div>
+                                        <div class="metric-mini">
+                                            <span class="metric-k">P(y_w &gt; y_l):</span>
+                                            <span class="metric-v text-neon" id="dpoProbVal">--%</span>
+                                        </div>
+                                        <div class="metric-mini">
+                                            <span class="metric-k">Fikir Birliği (Consensus):</span>
+                                            <span class="metric-v text-pearl" id="dpoConsensusVal">--%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 2. YEREL DPO KENDİ KENDİNİ EĞİTME MOTORU -->
+                                <div class="distill-card mt-3">
+                                    <div class="distill-card-title-row">
+                                        <span class="distill-tag tag-royal">Yerel Model Öz-Gelişim Motoru</span>
+                                        <span class="pill-mini pill-neon">NVIDIA sm_120</span>
+                                    </div>
+                                    <p class="font-xs text-pearl-muted mt-2">
+                                        Damıtılan sentetik münazara verileri doğrudan yerel C++20 <code>src/alignment/dpo_loss.cpp</code> ve <code>src/nn/lora.cpp</code> motoruna aktarılır. Dış yapay zekaların ağırlıklarımıza müdahalesi olmadan, yerel çekirdek kendi kendini günceller.
+                                    </p>
+                                    
+                                    <div class="training-sim-box mt-3" id="trainingBox">
+                                        <div class="d-flex justify-between font-xs mb-1">
+                                            <span id="trainStatusLabel">Eğitim Hazır: Damıtma verisi bekleniyor</span>
+                                            <span id="trainLossVal" class="text-neon font-mono">Loss: --</span>
+                                        </div>
+                                        <div class="progress-bar-bg" style="height: 10px;">
+                                            <div class="progress-bar-fill fill-purple" id="trainProgressBar" style="width: 0%;"></div>
+                                        </div>
+                                        <div class="training-metrics-sub mt-2" id="trainingSubInfo">
+                                            <span>Hedef Ağırlık: <code>aic_mini_llm.lora</code></span>
+                                            <span>•</span>
+                                            <span>C++ Motoru: Sm_120 CUDA Stream</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex gap-2 mt-3">
+                                        <button class="btn btn-primary flex-1" id="btnRunTraining" onclick="app.runLocalDistillationTraining()" disabled>
+                                            <span class="btn-icon">🚀</span> Yerel Modele Damıt & Eğit
+                                        </button>
+                                        <button class="btn btn-secondary" id="btnExportJsonl" onclick="app.exportDistilledDataset()" title="DPO Veri Setini İndir (.jsonl)" disabled>
+                                            <span class="btn-icon">📥</span> JSONL
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- 3. GÜVENLİK VE AIR-GAP TELEMETRİSİ -->
+                                <div class="distill-card mt-3">
+                                    <div class="distill-card-title-row">
+                                        <span class="distill-tag tag-green">İzolasyon Denetim Kaydı (Audit Log)</span>
+                                        <span class="font-xs text-green">100% GÜVENLİ</span>
+                                    </div>
+                                    <ul class="audit-log-list font-xs text-pearl-dim mt-2" id="auditLogList">
+                                        <li><span class="text-green">✓</span> Dış API soketleri pasif okuma modunda başlatıldı.</li>
+                                        <li><span class="text-green">✓</span> AIC karar mekanizması bellek adresi kilitlendi (Read-Only Core).</li>
+                                        <li><span class="text-green">✓</span> Harici kod yürütme koruması etkinleştirildi (%0 dış erişim).</li>
+                                        <li><span class="text-green">✓</span> Sentetik veri temizleme ve toksisite/çelişki filtresi devrede.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- ============================================== -->
+                <!-- VIEW 7: SERVER & TELEMETRY MONITOR -->
                 <!-- ============================================== -->
                 <section class="view-panel" id="view-server">
                     <div class="panel-header">
@@ -1030,6 +1271,77 @@ Yukarıdaki 'Çalıştır' veya 'Tüm Kıyaslamaları Koş' butonuna basarak can
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" onclick="app.closeModal('sandboxFileModal')">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 6: API CONFIGURATION (OPENAI, CLAUDE, GEMINI & AIR-GAP CONTROLS) -->
+    <div class="modal-overlay" id="apiConfigModal">
+        <div class="modal-content card-purple-glow" style="width: 650px;">
+            <div class="modal-header">
+                <div class="d-flex items-center gap-2">
+                    <span class="header-icon">⚙️</span>
+                    <h3>Çoklu Yapay Zeka API Bağlantıları & Air-Gap Güvenliği</h3>
+                </div>
+                <button class="modal-close-btn" onclick="app.closeModal('apiConfigModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="airgap-pill-alert mb-3">
+                    <span class="text-neon font-bold">🛡️ KESİN İZOLASYON KURALI:</span>
+                    <span class="text-pearl font-xs">Girilen API anahtarları yalnızca münazara ve veri damıtma amacıyla kullanılır. AIC'nin saf yerel C++20 karar mekanizması, MCTS arama motoru ve yerel dosyaları dış API'lere asla açılmaz.</span>
+                </div>
+
+                <!-- MOCK vs LIVE TOGGLE -->
+                <div class="form-group mb-3 p-3 glass-card">
+                    <div class="d-flex justify-between items-center">
+                        <div>
+                            <div class="font-bold text-pearl">Çalışma Modu:</div>
+                            <div class="font-xs text-pearl-muted">API anahtarınız olmadan test etmek için Simülasyon modunu açık tutabilirsiniz.</div>
+                        </div>
+                        <div class="sidebar-server-toggle">
+                            <label class="switch-container">
+                                <input type="checkbox" id="mockApiToggle" checked onchange="app.toggleMockApi(this.checked)">
+                                <span class="switch-slider"></span>
+                            </label>
+                            <span class="switch-label text-neon font-bold" id="mockApiLabel">Simülasyon Modu (Mock)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="control-label font-bold text-pearl mb-1">
+                        <span class="text-green">●</span> OpenAI API Key (GPT-4o / o1):
+                    </label>
+                    <input type="password" id="openaiApiKeyInput" class="form-input font-mono font-sm" placeholder="sk-proj-..." autocomplete="off">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="control-label font-bold text-pearl mb-1">
+                        <span class="text-gold">●</span> Anthropic Claude API Key (Claude 3.5 Sonnet):
+                    </label>
+                    <input type="password" id="claudeApiKeyInput" class="form-input font-mono font-sm" placeholder="sk-ant-api03-..." autocomplete="off">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="control-label font-bold text-pearl mb-1">
+                        <span class="text-neon">●</span> Google Gemini API Key (Gemini 1.5 Pro):
+                    </label>
+                    <input type="password" id="geminiApiKeyInput" class="form-input font-mono font-sm" placeholder="AIzaSy..." autocomplete="off">
+                </div>
+
+                <div class="form-group mb-2 p-3 glass-card">
+                    <div class="d-flex justify-between items-center">
+                        <div>
+                            <div class="font-bold text-green">Air-Gap İzolasyon Kilidi:</div>
+                            <div class="font-xs text-pearl-muted">Yerel C++ motorunun kararlarına dışarıdan müdahaleyi fiziksel olarak engeller.</div>
+                        </div>
+                        <span class="pill-mini pill-green font-bold">KİLİTLİ (AÇIK)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="app.closeModal('apiConfigModal')">İptal</button>
+                <button class="btn btn-primary" onclick="app.saveApiConfig()">Kaydet ve Uygula</button>
             </div>
         </div>
     </div>

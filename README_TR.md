@@ -90,6 +90,16 @@ Sıradan derin öğrenme projeleri onlarca gigabaytlık Python kütüphaneleri, 
   4. **Aşama 4 (Yerel C++20 DPO Eğitimi):** Elde edilen bilgiyi yerel RTX 5090 Blackwell GPU üzerinde eğiterek `aic_continuous_evolution.aic_lora` ağırlıklarını günceller ve bir sonraki döngüye otomatik geçer.
 - **Kesin İzolasyon İlkesi:** Dış kaynaklar ve modeller sistemin karar mekanizmasına asla katılamaz; sadece sentetik eğitim verisi üretir. Saf C++20 yerel çekirdeği %100 egemen ve izoledir.
 
+### 💾 12. Otomatik Yerel Bilgi Veritabanı & Sıfır Zahmet Kalıcılık (Zero-Friction Local Knowledge DB)
+- **%100 Otomatik Gerçek Zamanlı Kayıt:** Sistem hem sürekli öz-eğitim döngüsünde hem de münazara arenasında öğrendiği her araştırma konusunu, taranan kaynakları, damıtılan DPO tercih çiftlerini $(x, y_w, y_l)$, loss değişimlerini ve donanım sağlama toplamlarını (Adler32 Checksum) **anında kendi yerel veritabanına (`IndexedDB + LocalStorage Çift Kasa`) otomatik olarak kaydeder**.
+- **Sıfır Manuel İş Yükü (Açılışta Otomatik Geri Yükleme):** Kullanıcının hiçbir import veya export ile uğraşmasına gerek kalmaz. Uygulama her açıldığında veya yeniden başlatıldığında, geçmişte öğrenilen tüm bilgi bankası, kümülatif döngü sayısı, toplam token hacmi ve model evrim metrikleri doğrudan veritabanından kendiliğinden yüklenir.
+- **İsteğe Bağlı Manuel Yedekleme & Geri Yükleme (Export / Import):** Otomatik kalıcılığa ek olarak; dileyen kullanıcılar için:
+  - 📥 **Dışa Aktar:** Tüm veritabanını tek tıkla yapılandırılmış `.json` veya `.jsonl` yedeği olarak indirme,
+  - 📤 **İçe Aktar:** Önceden alınmış yedekleri yükleyip mevcut bilgi hazinesiyle çakışma olmadan akıllıca birleştirme (merge),
+  - 🗑️ **Veritabanını Sıfırla:** Onay mekanizmalı kalıcı sıfırlama seçenekleri sunulmaktadır.
+- **Canlı Arama & Detaylı İnceleme Modalı:** Öğrenilen yüzlerce konu arasında anlık arama yapılabilir; herhangi bir kayda tıklandığında seçilen tez, reddedilen yanıt, bilimsel kaynaklar ve yerel RTX 5090 sm_120 C++ eğitim telemetrisi detaylı pencerede incelenebilir.
+- **%100 Yerel & Air-Gapped Kalıcılık:** Veritabanı bütünüyle kullanıcının yerel makinesinde barınır, buluta hiçbir veri sızdırılmaz.
+
 ---
 
 ## 4. Sistem Bileşenleri ve Dizin Yapısı

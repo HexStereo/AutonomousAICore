@@ -2582,5 +2582,94 @@ input:checked + .switch-slider:before {
     transform: translateX(2px);
 }
 
+/* PERSISTENT KNOWLEDGE DATABASE & MODAL STYLES */
+.db-live-tag {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent-green);
+    background: rgba(0, 245, 212, 0.1);
+    border: 1px solid rgba(0, 245, 212, 0.3);
+    border-radius: var(--radius-sm);
+    padding: 2px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.3s ease;
+}
+
+.badge-pulse-green {
+    background: rgba(0, 245, 212, 0.28) !important;
+    box-shadow: 0 0 12px rgba(0, 245, 212, 0.6);
+    border-color: var(--accent-green) !important;
+}
+
+.db-search-bar-row {
+    width: 100%;
+}
+
+.db-search-input {
+    width: 100%;
+    background: rgba(10, 6, 18, 0.7);
+    border: 1px solid var(--pearl-border);
+    border-radius: var(--radius-sm);
+    padding: 6px 10px;
+    font-size: 11px;
+    color: var(--pearl);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.db-search-input:focus {
+    border-color: var(--purple-neon);
+    box-shadow: 0 0 10px rgba(157, 78, 221, 0.3);
+}
+
+.k-box {
+    background: rgba(10, 6, 18, 0.75);
+    border: 1px solid var(--pearl-border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+}
+
+.dpo-comparison-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dpo-box {
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    line-height: 1.5;
+}
+
+.dpo-winner-box {
+    background: linear-gradient(135deg, rgba(6, 4, 10, 0.9) 0%, rgba(0, 245, 212, 0.08) 100%);
+    border: 1px solid rgba(0, 245, 212, 0.35);
+}
+
+.dpo-loser-box {
+    background: linear-gradient(135deg, rgba(6, 4, 10, 0.9) 0%, rgba(239, 35, 60, 0.06) 100%);
+    border: 1px solid rgba(239, 35, 60, 0.3);
+}
+
+.dpo-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    padding-bottom: 6px;
+}
+
+.hardware-telemetry-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    background: rgba(20, 12, 38, 0.5);
+    border: 1px solid var(--pearl-border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+}
+
 
 

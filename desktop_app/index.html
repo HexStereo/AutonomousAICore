@@ -42,6 +42,8 @@
                 <div class="dropdown-menu">
                     <div class="dropdown-entry" onclick="app.actionNewSession()"><span>Yeni Oturum</span><kbd>Ctrl+N</kbd></div>
                     <div class="dropdown-entry" onclick="app.actionOpenCheckpoint()"><span>Checkpoint Aç (.aic)...</span><kbd>Ctrl+O</kbd></div>
+                    <div class="dropdown-entry" onclick="app.downloadCumulativeBank()"><span>Öğrenilen Bilgi Veritabanını İndir (.json)...</span></div>
+                    <div class="dropdown-entry" onclick="app.triggerDbImport()"><span>Veritabanını İçe Aktar / Geri Yükle...</span></div>
                     <div class="dropdown-entry" onclick="app.actionExportLogs()"><span>Logları Dışa Aktar</span><kbd>Ctrl+S</kbd></div>
                     <div class="dropdown-divider"></div>
                     <div class="dropdown-entry" onclick="app.actionExit()"><span>Çıkış</span><kbd>Alt+F4</kbd></div>
@@ -1071,6 +1073,7 @@ Yukarıdaki 'Çalıştır' veya 'Tüm Kıyaslamaları Koş' butonuna basarak can
                                 <span class="airgap-pill"><span class="dot-green"></span> Dış Model Yetkisi: Yalnızca Pasif Veri Sparring</span>
                                 <span class="airgap-pill"><span class="dot-green"></span> Donanım Eğitimi: RTX 5090 Blackwell C++20 sm_120</span>
                                 <span class="airgap-pill"><span class="dot-purple"></span> Hedef Adaptör: <code>aic_continuous_evolution.aic_lora</code></span>
+                                <span class="airgap-pill"><span class="dot-green"></span> Veritabanı: <strong id="dbStatusText" class="text-neon">Otomatik Kayıt Aktif (IndexedDB)</strong></span>
                             </div>
                         </div>
                     </div>
@@ -1242,12 +1245,28 @@ Yukarıdaki 'Çalıştır' veya 'Tüm Kıyaslamaları Koş' butonuna basarak can
                                     </div>
                                 </div>
 
-                                <!-- GEÇMİŞ DÖNGÜLERDE ÖĞRENİLEN KONULAR LİSTESİ -->
-                                <div class="distill-card mt-2 flex-1 d-flex flex-column" style="min-height: 200px;">
+                                <!-- GEÇMİŞ DÖNGÜLERDE ÖĞRENİLEN KONULAR LİSTESİ & KALICI VERİTABANI -->
+                                <div class="distill-card mt-2 flex-1 d-flex flex-column" style="min-height: 220px;">
                                     <div class="distill-card-title-row mb-2">
-                                        <span class="distill-tag tag-green">Kümülatif Bilgi Arşivi (Knowledge Bank)</span>
-                                        <button class="btn btn-secondary btn-xs" onclick="app.downloadCumulativeBank()"><span class="btn-icon">📥</span> JSONL İndir</button>
+                                        <div class="d-flex items-center gap-2">
+                                            <span class="distill-tag tag-green">Kümülatif Bilgi Arşivi (Knowledge Bank)</span>
+                                            <span class="db-live-tag" id="dbRecordCountBadge">💾 0 Kayıt Otomatik Kaydedildi</span>
+                                        </div>
+                                        <div class="d-flex items-center gap-1">
+                                            <button class="btn btn-secondary btn-xs" onclick="app.downloadCumulativeBank()" title="Yedek JSON olarak dışa aktar"><span class="btn-icon">📥</span> Dışa Aktar</button>
+                                            <button class="btn btn-secondary btn-xs" onclick="app.triggerDbImport()" title="Yedek JSON/JSONL dosyasını veritabanına aktar / geri yükle"><span class="btn-icon">📤</span> İçe Aktar</button>
+                                            <button class="btn btn-secondary btn-xs" onclick="app.clearLocalDatabase()" title="Veritabanını temizle" style="color: #ff4d6d;"><span class="btn-icon">🗑️</span> Temizle</button>
+                                        </div>
                                     </div>
+
+                                    <!-- Gizli Dosya Seçici (İçe Aktarma İçin) -->
+                                    <input type="file" id="dbImportFileInput" accept=".json,.jsonl" style="display:none;" onchange="app.handleDbFileImport(event)">
+
+                                    <!-- Hızlı Arama & Filtreleme -->
+                                    <div class="db-search-bar-row mb-2">
+                                        <input type="text" id="dbSearchInput" class="db-search-input" placeholder="🔍 Veritabanındaki bilgi ve konularda ara..." oninput="app.filterKnowledgeList(this.value)">
+                                    </div>
+
                                     <div class="learned-knowledge-scroll" id="learnedKnowledgeList">
                                         <div class="font-xs text-pearl-muted text-center p-3">Henüz tamamlanan bir döngü yok. "Sürekli Öz-Eğitimi Başlat"a basarak ilk döngüyü tetikleyin.</div>
                                     </div>
@@ -1573,6 +1592,26 @@ Yukarıdaki 'Çalıştır' veya 'Tüm Kıyaslamaları Koş' butonuna basarak can
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="app.closeModal('apiConfigModal')">İptal</button>
                 <button class="btn btn-primary" onclick="app.saveApiConfig()">Kaydet ve Uygula</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ÖĞRENİLEN BİLGİ & DPO DETAY MODALI -->
+    <div class="modal-overlay" id="knowledgeDetailModal">
+        <div class="modal-content card-purple-glow" style="width: 720px; max-height: 85vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <div class="d-flex items-center gap-2">
+                    <span class="modal-icon">🧠</span>
+                    <h3 class="modal-title" id="kModalTitle">Öğrenilen Bilgi & DPO Sentezi</h3>
+                </div>
+                <button class="modal-close-btn" onclick="app.closeModal('knowledgeDetailModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="kModalBody" style="overflow-y: auto; padding: 16px;">
+                <!-- Dinamik olarak doldurulur -->
+            </div>
+            <div class="modal-footer d-flex justify-between items-center">
+                <span class="font-xs text-pearl-dim">💾 Yerel IndexedDB'de Kalıcı Saklanıyor • Air-Gap Korumalı</span>
+                <button class="btn btn-secondary" onclick="app.closeModal('knowledgeDetailModal')">Kapat</button>
             </div>
         </div>
     </div>

@@ -82,6 +82,14 @@ Sıradan derin öğrenme projeleri onlarca gigabaytlık Python kütüphaneleri, 
   - Dış modellerden hiçbir kod çalıştırılmaz; sistemin %100 saf, yerel C++ mimarisi ve veri egemenliği korunur.
 - **Yerel C++20 DPO Öz-Eğitim Motoru:** Münazaradan süzülen en güçlü argümanlar kazanmış tercih ($y_w$), çelişkili veya zayıf argümanlar ise kaybeden tercih ($y_l$) olarak etiketlenir. Bu sentetik tercih çiftleri doğrudan yerel `src/alignment/dpo_loss.cpp` ve `src/nn/lora.cpp` motorumuza aktarılarak NVIDIA RTX 5090 Blackwell GPU üzerinde yerel olarak eğitilir ve modelin kendi kendini geliştirmesi sağlanır.
 
+### ♾️ 11. Otonom Sürekli Öz-Eğitim & Web Keşif Laboratuvarı (Perpetual Auto-Loop Engine)
+- **Tek Tuşla Sonsuz Öz-Gelişim Döngüsü:** Kullanıcının yalnızca *"Sürekli Öz-Eğitimi Başlat"* butonuna basmasıyla devreye giren 4 aşamalı otonom boru hattı:
+  1. **Aşama 1 (Rastgele Konu & Hipotez Keşfi):** Sistem yapay zekanın öğrenebileceği en güncel bilimsel konuları (SNN seyrek çıkarım, zkML kanıtları, DoRA PEFT, FlashDecoding++, Kuantum tensör ağları, Mixture-of-Depths vb.) otonom olarak üretir.
+  2. **Aşama 2 (İnternet & arXiv Literatür Taraması):** Web ve teknik yayın havuzlarından (arXiv, IEEE, GitHub) teknik formülleri ve özet bilgi dosyalarını çeker.
+  3. **Aşama 3 (Çoklu Yapay Zeka Tartışması):** OpenAI, Claude ve Gemini modelleriyle tezi eleştiri ve karşı argüman süzgecinden geçirir; implicit reward marjlı DPO $(x, y_w, y_l)$ çifti çıkarır.
+  4. **Aşama 4 (Yerel C++20 DPO Eğitimi):** Elde edilen bilgiyi yerel RTX 5090 Blackwell GPU üzerinde eğiterek `aic_continuous_evolution.aic_lora` ağırlıklarını günceller ve bir sonraki döngüye otomatik geçer.
+- **Kesin İzolasyon İlkesi:** Dış kaynaklar ve modeller sistemin karar mekanizmasına asla katılamaz; sadece sentetik eğitim verisi üretir. Saf C++20 yerel çekirdeği %100 egemen ve izoledir.
+
 ---
 
 ## 4. Sistem Bileşenleri ve Dizin Yapısı

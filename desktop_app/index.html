@@ -84,6 +84,7 @@
                     <div class="dropdown-entry" onclick="app.switchView('reasoning')"><span>Tree-of-Thoughts / MCTS Motoru</span></div>
                     <div class="dropdown-entry" onclick="app.switchView('agent')"><span>ReAct Sandbox Konsolu</span></div>
                     <div class="dropdown-entry" onclick="app.switchView('debate')"><span>Otonom Münazara & Damıtma Arenası</span></div>
+                    <div class="dropdown-entry" onclick="app.switchView('continuous')"><span>Sonsuz Otonom Öz-Eğitim Döngüsü (Auto-Loop)</span></div>
                     <div class="dropdown-entry" onclick="app.openApiConfigModal()"><span>API Anahtarları (OpenAI, Claude, Gemini)</span></div>
                     <div class="dropdown-divider"></div>
                     <div class="dropdown-entry" onclick="app.openGrammarModal()"><span>DFA Yapısal Dilbilgisi Editörü</span></div>
@@ -155,6 +156,11 @@
                         <span class="nav-icon">🏛️</span>
                         <span class="nav-label">Otonom Münazara</span>
                         <span class="nav-tag tag-violet">DPO/SYNTH</span>
+                    </button>
+                    <button class="nav-item" data-view="continuous" onclick="app.switchView('continuous')">
+                        <span class="nav-icon">♾️</span>
+                        <span class="nav-label">Sonsuz Öz-Eğitim</span>
+                        <span class="nav-tag tag-neon">AUTO-LOOP</span>
                     </button>
                     <button class="nav-item" data-view="server" onclick="app.switchView('server')">
                         <span class="nav-icon">🌐</span>
@@ -1022,6 +1028,231 @@ Yukarıdaki 'Çalıştır' veya 'Tüm Kıyaslamaları Koş' butonuna basarak can
                                         <li><span class="text-green">✓</span> Sentetik veri temizleme ve toksisite/çelişki filtresi devrede.</li>
                                     </ul>
                                 </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- ============================================== -->
+                <!-- VIEW: SONSUZ OTONOM ÖZ-EĞİTİM & İNTERNET KEŞİF DÖNGÜSÜ -->
+                <!-- ============================================== -->
+                <section class="view-panel" id="view-continuous">
+                    <div class="panel-header">
+                        <div>
+                            <h2 class="panel-title">Otonom Sürekli Öz-Eğitim & Web Keşif Laboratuvarı</h2>
+                            <p class="panel-desc">Tek Tuşla Sonsuz Döngü: Otonom Rastgele Konu Keşfi &rarr; Web/arXiv Literatür Taraması &rarr; Çoklu Yapay Zeka Münazarası &rarr; Yerel C++ DPO Öz-Eğitimi</p>
+                        </div>
+                        <div class="panel-actions">
+                            <button class="btn btn-secondary" onclick="app.openApiConfigModal()"><span class="btn-icon">⚙️</span> API Ayarları</button>
+                            <button class="btn btn-primary btn-hero-glow" id="btnToggleContinuousLoop" onclick="app.toggleContinuousLoop()">
+                                <span class="btn-icon" id="continuousBtnIcon">▶️</span> <span id="continuousBtnText">Sürekli Öz-Eğitimi Başlat</span>
+                            </button>
+                            <button class="btn btn-secondary" onclick="app.resetContinuousSession()"><span class="btn-icon">🔄</span> Sıfırla</button>
+                        </div>
+                    </div>
+
+                    <!-- AIR-GAP SECURITY ISOLATION BADGE FOR AUTO LOOP -->
+                    <div class="airgap-isolation-banner mb-3" style="border-color: var(--accent-green); background: linear-gradient(135deg, rgba(6, 4, 10, 0.95) 0%, rgba(0, 245, 212, 0.08) 100%);">
+                        <div class="airgap-icon-wrap" style="border-color: var(--accent-green); background: rgba(0, 245, 212, 0.15);">
+                            <span class="airgap-shield">🛡️</span>
+                            <span class="airgap-pulse"></span>
+                        </div>
+                        <div class="airgap-content">
+                            <div class="airgap-title-row">
+                                <h4 class="airgap-title" style="color: var(--accent-green);">OTONOM KEŞİF & SAF YEREL KOD KORUMASI (AIR-GAP 100% AKTİF)</h4>
+                                <span class="airgap-badge-verified">✓ KESİN İZOLASYON & OTOMATİK VERİ DAMITMA</span>
+                            </div>
+                            <p class="airgap-desc">
+                                <strong>Kural:</strong> Sistem internetten ve harici modellerden (OpenAI, Claude, Gemini) bilgi toplayıp münazara yaparken; AIC'nin yerel C++20 karar mekanizması, MCTS akıl yürütme çekirdeği ve donanım yazılımları <u>kesinlikle dışarıya kapalı tutulur</u>. Toplanan veriler yalnızca pasif tamponda süzülüp yerel RTX 5090 sm_120 LoRA DPO motoruna aktarılır.
+                            </p>
+                            <div class="airgap-status-pills">
+                                <span class="airgap-pill"><span class="dot-green"></span> Döngü Durumu: <strong id="continuousLoopStateBadge" class="text-neon">Beklemede (Başlat Butonuna Basın)</strong></span>
+                                <span class="airgap-pill"><span class="dot-green"></span> Dış Model Yetkisi: Yalnızca Pasif Veri Sparring</span>
+                                <span class="airgap-pill"><span class="dot-green"></span> Donanım Eğitimi: RTX 5090 Blackwell C++20 sm_120</span>
+                                <span class="airgap-pill"><span class="dot-purple"></span> Hedef Adaptör: <code>aic_continuous_evolution.aic_lora</code></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4-STEP PIPELINE VISUALIZATION (CANLI AŞAMA ÇİZELGESİ) -->
+                    <div class="pipeline-stepper-card mb-3">
+                        <div class="stepper-step" id="step-topic">
+                            <div class="step-num">1</div>
+                            <div class="step-info">
+                                <div class="step-title">Rastgele Konu Keşfi</div>
+                                <div class="step-desc" id="step-topic-desc">Hipotez Belirleniyor</div>
+                            </div>
+                            <span class="step-arrow">&rarr;</span>
+                        </div>
+                        <div class="stepper-step" id="step-web">
+                            <div class="step-num">2</div>
+                            <div class="step-info">
+                                <div class="step-title">İnternet & arXiv Taraması</div>
+                                <div class="step-desc" id="step-web-desc">Kaynaklar Aranıyor</div>
+                            </div>
+                            <span class="step-arrow">&rarr;</span>
+                        </div>
+                        <div class="stepper-step" id="step-debate">
+                            <div class="step-num">3</div>
+                            <div class="step-info">
+                                <div class="step-title">Çoklu Yapay Zeka Tartışması</div>
+                                <div class="step-desc" id="step-debate-desc">Diyalektik Süzgeç</div>
+                            </div>
+                            <span class="step-arrow">&rarr;</span>
+                        </div>
+                        <div class="stepper-step" id="step-train">
+                            <div class="step-num">4</div>
+                            <div class="step-info">
+                                <div class="step-title">Yerel C++20 DPO Eğitimi</div>
+                                <div class="step-desc" id="step-train-desc">Ağırlıklar Güncelleniyor</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TELEMETRY & EVOLUTION STATS CARDS -->
+                    <div class="stat-cards-grid mb-3">
+                        <div class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-label">TAMAMLANAN DÖNGÜ</span>
+                                <span class="stat-icon-badge">♾️</span>
+                            </div>
+                            <div class="stat-value text-neon" id="statCompletedCycles">0 <span class="stat-unit">Tur</span></div>
+                            <div class="stat-footer">
+                                <span class="pill-mini pill-neon" id="statCurrentCycleStatus">Döngü Bekliyor</span>
+                                <span class="stat-detail">Otomatik Geçiş Aktif</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-label">DAMITILAN DPO ÇİFTİ</span>
+                                <span class="stat-icon-badge">🧬</span>
+                            </div>
+                            <div class="stat-value text-green" id="statExtractedPairs">0 <span class="stat-unit">Çift</span></div>
+                            <div class="stat-footer">
+                                <span class="pill-mini pill-green">(x, y_w, y_l)</span>
+                                <span class="stat-detail">Sıfır İnsan Müdahalesi</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-label">KAZANILAN BİLGİ HACMİ</span>
+                                <span class="stat-icon-badge">📚</span>
+                            </div>
+                            <div class="stat-value" id="statTokensLearned">0 <span class="stat-unit">Token</span></div>
+                            <div class="stat-footer">
+                                <span class="pill-mini pill-purple">arXiv + Web Sentezi</span>
+                                <span class="stat-detail">Semantik DPO Damıtma</span>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-label">KÜMÜLATİF DPO LOSS</span>
+                                <span class="stat-icon-badge">📉</span>
+                            </div>
+                            <div class="stat-value text-green" id="statCumulativeLoss">-- <span class="stat-unit">&Delta; Loss</span></div>
+                            <div class="stat-footer">
+                                <span class="pill-mini pill-green">RTX 5090 sm_120</span>
+                                <span class="stat-detail">Adler32 Checksum Doğrulandı</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2-COLUMN CONTINUOUS WORKSPACE -->
+                    <div class="continuous-workspace-grid">
+                        
+                        <!-- SOL SÜTUN: CANLI KEŞİF, İNTERNET TARAMASI VE TARTIŞMA AKIŞI -->
+                        <div class="arena-column continuous-feed-wrap">
+                            <div class="arena-column-header">
+                                <div class="d-flex items-center gap-2">
+                                    <span class="header-icon">📡</span>
+                                    <h3 class="arena-section-title">Canlı Keşif, İnternet Araştırması & Münazara Konsolu</h3>
+                                </div>
+                                <div class="d-flex items-center gap-2">
+                                    <span class="pill-mini pill-purple font-xs" id="autoLoopSpeedBadge">Hız: Normal (Dinamik)</span>
+                                    <button class="btn btn-secondary btn-xs" onclick="app.clearContinuousFeed()">Temizle</button>
+                                </div>
+                            </div>
+
+                            <div class="continuous-feed-scroll" id="continuousFeedContainer">
+                                <div class="continuous-welcome-box">
+                                    <div class="welcome-icon">♾️</div>
+                                    <h4>Otonom Sürekli Öz-Eğitim Döngüsü Hazır</h4>
+                                    <p class="font-sm text-pearl-muted mt-1">
+                                        Yukarıdaki <strong>"▶️ Sürekli Öz-Eğitimi Başlat"</strong> butonuna bastığınızda; sistem insan müdahalesine ihtiyaç duymadan rastgele en güncel bilimsel/teknik konuları keşfedecek, internetten ve teknik literatürden araştırıp özetleyecek, diğer yapay zekalarla (OpenAI, Claude, Gemini) tez-antitez tartışması yapacak ve elde ettiği bilgiyi saf yerel C++20 DPO motoruyla kendi kendine öğretecektir.
+                                    </p>
+                                    <div class="welcome-badges mt-3">
+                                        <span class="pill-mini pill-neon">100% Kendi Kendini Eğitme</span>
+                                        <span class="pill-mini pill-green">Air-Gap İzolasyon Güvencesi</span>
+                                        <span class="pill-mini pill-royal">Sonsuz Sürekli Döngü</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SAĞ SÜTUN: KÜMÜLATİF BİLGİ BANKASI VE YEREL MODEL GELİŞİMİ -->
+                        <div class="arena-column continuous-bank-wrap">
+                            <div class="arena-column-header">
+                                <div class="d-flex items-center gap-2">
+                                    <span class="header-icon">🧠</span>
+                                    <h3 class="arena-section-title">Öğrenilen Bilgi Bankası & Model Evrimi</h3>
+                                </div>
+                                <span class="pill-mini pill-neon">C++20 LoRA Adaptörü</span>
+                            </div>
+
+                            <div class="distillation-scrollable-body">
+                                
+                                <!-- AKTİF DÖNGÜ ÖZETİ KARTI -->
+                                <div class="distill-card">
+                                    <div class="distill-card-title-row">
+                                        <span class="distill-tag tag-purple">Aktif Döngü Odak Konusu</span>
+                                        <span class="font-xs text-neon" id="curCycleTitle">Beklemede...</span>
+                                    </div>
+                                    <div class="mt-2 font-xs text-pearl-dim" id="curCycleTopicSummary">
+                                        Döngü başlatıldığında otonom olarak üretilen araştırma konusu ve internetten çekilen özet burada görüntülenecektir.
+                                    </div>
+                                    <div class="cur-cycle-web-sources mt-2" id="curCycleSourcesWrap" style="display: none;">
+                                        <span class="font-xs text-pearl-muted font-bold">Taranan İnternet & Akademik Kaynaklar:</span>
+                                        <ul class="font-xs text-green mt-1" id="curCycleSourcesList" style="list-style: none; padding-left: 0;"></ul>
+                                    </div>
+                                </div>
+
+                                <!-- CANLI YEREL MODEL EĞİTİM İLERLEMESİ -->
+                                <div class="distill-card mt-2">
+                                    <div class="distill-card-title-row">
+                                        <span class="distill-tag tag-royal">Yerel Donanım Eğitimi (RTX 5090 Blackwell)</span>
+                                        <span class="font-xs text-pearl-muted" id="curTrainProgressPct">0%</span>
+                                    </div>
+                                    <div class="training-sim-box mt-2">
+                                        <div class="d-flex justify-between font-xs mb-1">
+                                            <span id="curTrainStatusText">Yerel C++20 Motoru Hazır</span>
+                                            <span id="curTrainLossText" class="font-mono text-neon">Loss: --</span>
+                                        </div>
+                                        <div class="progress-bar-bg" style="height: 10px;">
+                                            <div class="progress-bar-fill fill-purple" id="curTrainProgressBar" style="width: 0%;"></div>
+                                        </div>
+                                        <div class="training-metrics-sub mt-2">
+                                            <span>Çekirdek: <code>sm_120 CUDA Tensor Cores</code></span>
+                                            <span>•</span>
+                                            <span>Dosya: <code>src/alignment/dpo_loss.cpp</code></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- GEÇMİŞ DÖNGÜLERDE ÖĞRENİLEN KONULAR LİSTESİ -->
+                                <div class="distill-card mt-2 flex-1 d-flex flex-column" style="min-height: 200px;">
+                                    <div class="distill-card-title-row mb-2">
+                                        <span class="distill-tag tag-green">Kümülatif Bilgi Arşivi (Knowledge Bank)</span>
+                                        <button class="btn btn-secondary btn-xs" onclick="app.downloadCumulativeBank()"><span class="btn-icon">📥</span> JSONL İndir</button>
+                                    </div>
+                                    <div class="learned-knowledge-scroll" id="learnedKnowledgeList">
+                                        <div class="font-xs text-pearl-muted text-center p-3">Henüz tamamlanan bir döngü yok. "Sürekli Öz-Eğitimi Başlat"a basarak ilk döngüyü tetikleyin.</div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
 

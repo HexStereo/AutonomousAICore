@@ -1,0 +1,43 @@
+# Build directories
+build/
+build_ninja/
+build_cuda/
+.vscode/
+
+# Compiled Binaries & Libraries
+*.exe
+*.dll
+*.so
+*.dylib
+*.lib
+*.a
+*.obj
+*.o
+*.pdb
+*.ilk
+*.exp
+*.idb
+
+# Ninja & CMake artifacts
+.ninja*
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+
+# Logs and Checkpoints
+*.log
+*.aic
+*.aic_lora
+*.aic_q
+checkpoints/
+cli_ckpts/
+autonomous_ckpts/
+example_ckpts/
+
+# Test sandboxes
+test_sandbox_*/
+cli_sandbox_workspace/
+
+# OS artifacts
+Thumbs.db
+.DS_Store

@@ -18,12 +18,12 @@
         <!-- 1. WINDOW TITLE BAR (Classic Desktop Style) -->
         <header class="window-titlebar" id="windowTitlebar">
             <div class="titlebar-left">
-                <img src="assets/aic_app_icon.png" alt="AIC Logo" class="titlebar-icon">
+                <img src="assets/aic_app_icon.png" alt="AIC Logo" class="titlebar-icon" onclick="app.openAboutModal()" style="cursor:pointer;" title="Hakkında">
                 <span class="titlebar-title">Autonomous AI Core — Desktop Studio <span class="badge-version">v0.1.0</span></span>
-                <span class="titlebar-badge-hw" id="hwBadge">NVIDIA Blackwell sm_120</span>
+                <span class="titlebar-badge-hw" id="hwBadge" onclick="app.openHardwareModal()" style="cursor:pointer;" title="Donanım Detayları">NVIDIA Blackwell sm_120</span>
             </div>
             <div class="titlebar-center">
-                <div class="server-pill" id="serverPill">
+                <div class="server-pill" id="serverPill" onclick="app.switchView('server')" style="cursor:pointer;" title="Sunucu Yönetimi">
                     <span class="pill-dot" id="pillDot"></span>
                     <span class="pill-text" id="pillText">Sunucu: Çevrimiçi (127.0.0.1:8080)</span>
                 </div>
@@ -44,7 +44,7 @@
                     <div class="dropdown-entry" onclick="app.actionOpenCheckpoint()"><span>Checkpoint Aç (.aic)...</span><kbd>Ctrl+O</kbd></div>
                     <div class="dropdown-entry" onclick="app.actionExportLogs()"><span>Logları Dışa Aktar</span><kbd>Ctrl+S</kbd></div>
                     <div class="dropdown-divider"></div>
-                    <div class="dropdown-entry" onclick="window.close()"><span>Çıkış</span><kbd>Alt+F4</kbd></div>
+                    <div class="dropdown-entry" onclick="app.actionExit()"><span>Çıkış</span><kbd>Alt+F4</kbd></div>
                 </div>
             </div>
             <div class="menu-item" data-menu="engine">
@@ -116,7 +116,7 @@
             
             <!-- LEFT NAVIGATION SIDEBAR -->
             <aside class="sidebar">
-                <div class="sidebar-brand">
+                <div class="sidebar-brand" onclick="app.switchView('dashboard')" style="cursor: pointer;" title="Ana Sayfaya Dön">
                     <div class="brand-hex">
                         <img src="assets/aic_app_icon.png" alt="Logo" class="brand-logo">
                     </div>
@@ -187,7 +187,7 @@
                         </div>
                     </div>
 
-                    <div class="telem-row">
+                    <div class="telem-row" style="cursor: pointer;" onclick="app.runAllTests()" title="Testleri Koş">
                         <div class="telem-label">
                             <span>Test Sağlığı</span>
                             <span class="text-green">169 / 169 PASS</span>
@@ -227,7 +227,7 @@
 
                     <!-- 4 STAT CARDS -->
                     <div class="stat-cards-grid">
-                        <div class="stat-card card-purple-glow">
+                        <div class="stat-card card-purple-glow" onclick="app.switchView('benchmarks'); app.runBenchmark('gemm');" style="cursor:pointer;" title="Kıyaslamaya Git">
                             <div class="stat-top">
                                 <span class="stat-label">GPU GEMM BAŞARIMI</span>
                                 <span class="stat-icon-badge">🚀</span>
@@ -239,7 +239,7 @@
                             </div>
                         </div>
 
-                        <div class="stat-card">
+                        <div class="stat-card" onclick="app.switchView('benchmarks'); app.runBenchmark('gemm');" style="cursor:pointer;" title="Kıyaslamaya Git">
                             <div class="stat-top">
                                 <span class="stat-label">CPU AVX2 + FMA</span>
                                 <span class="stat-icon-badge">⚡</span>
@@ -251,7 +251,7 @@
                             </div>
                         </div>
 
-                        <div class="stat-card">
+                        <div class="stat-card" onclick="app.switchView('benchmarks'); app.runBenchmark('flash');" style="cursor:pointer;" title="Kıyaslamaya Git">
                             <div class="stat-top">
                                 <span class="stat-label">FLASHATTENTION-2</span>
                                 <span class="stat-icon-badge">🔥</span>
@@ -263,7 +263,7 @@
                             </div>
                         </div>
 
-                        <div class="stat-card">
+                        <div class="stat-card" onclick="app.runAllTests()" style="cursor:pointer;" title="169 Testi İncele">
                             <div class="stat-top">
                                 <span class="stat-label">BİRİM TEST SAĞLIĞI</span>
                                 <span class="stat-icon-badge">🛡️</span>
@@ -280,7 +280,7 @@
                     <div class="glass-section mt-4">
                         <div class="section-title-row">
                             <h3 class="section-title">Doğrulanmış Fiziksel Donanım Hedefi</h3>
-                            <span class="badge-pearl">Runtime Probed</span>
+                            <button class="btn btn-secondary btn-sm" onclick="app.openHardwareModal()">Ayrıntılı Rapor</button>
                         </div>
                         <div class="hw-grid">
                             <div class="hw-item">
@@ -307,7 +307,7 @@
                     </div>
 
                     <!-- QUICK LAUNCH TILES -->
-                    <h3 class="section-title mt-4">Hızlı Erişim Eylemleri</h3>
+                    <h3 class="section-title mt-4">Hızlı Erişim Eylemleri (Tıklayarak Başlatın)</h3>
                     <div class="action-tiles-grid">
                         <div class="action-tile" onclick="app.switchView('chat')">
                             <div class="tile-icon">💬</div>
@@ -360,6 +360,15 @@
                                 <div class="chat-actions">
                                     <button class="btn btn-secondary btn-sm" onclick="app.clearChat()">Temizle</button>
                                 </div>
+                            </div>
+
+                            <!-- QUICK PROMPT CHIPS -->
+                            <div class="quick-chips-bar">
+                                <span class="chip-label">Örnekler:</span>
+                                <button class="chip-btn" onclick="app.fillChatPrompt('Autonomous AI Core mimarisi hakkında özet ver.')">AIC Mimarisi</button>
+                                <button class="chip-btn" onclick="app.fillChatPrompt('25 * 16 işlemini adımlarıyla hesapla.')">25 * 16 Hesapla</button>
+                                <button class="chip-btn" onclick="app.fillChatPrompt('FlashAttention-2 neden standart attention\'a göre 51.8x daha hızlı?')">FlashAttention-2</button>
+                                <button class="chip-btn" onclick="app.fillChatPrompt('DFA dilbilgisi maskeleme motoru %0 sözdizimi hatasını nasıl sağlar?')">DFA Dilbilgisi</button>
                             </div>
 
                             <div class="chat-messages" id="chatMessages">
@@ -458,9 +467,15 @@
                     <div class="reasoning-grid">
                         <div class="reasoning-input-col">
                             <div class="glass-section">
-                                <h3 class="section-title">Problem Tanımı</h3>
+                                <div class="section-title-row">
+                                    <h3 class="section-title">Problem Tanımı</h3>
+                                    <select class="form-select font-sm" onchange="app.setReasoningPreset(this.value)" style="width: auto;">
+                                        <option value="1">Örnek 1: Matematiksel Denklem</option>
+                                        <option value="2">Örnek 2: Mantıksal Problem</option>
+                                        <option value="3">Örnek 3: Algoritmik Adımlar</option>
+                                    </select>
+                                </div>
                                 <div class="form-group">
-                                    <label>Girdi Sorusu / Problem:</label>
                                     <textarea id="reasoningPrompt" class="form-textarea" rows="3">a = 15, b = 25 ve c = a * b olduğuna göre, c + 125 değerini adımlarıyla hesaplayın:</textarea>
                                 </div>
 
@@ -473,11 +488,6 @@
                                         <label>Maksimum Ağaç Derinliği</label>
                                         <input type="number" id="reasoningDepth" class="form-input" value="4">
                                     </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Aday Düşünce Genişletme (Branches/Step)</label>
-                                    <input type="number" id="reasoningBranches" class="form-input" value="3">
                                 </div>
                             </div>
 
@@ -507,19 +517,30 @@
                             </div>
                         </div>
 
-                        <!-- VISUAL TREE CANVAS -->
+                        <!-- VISUAL TREE CANVAS & NODE INSPECTOR -->
                         <div class="reasoning-tree-col">
                             <div class="glass-section h-100">
                                 <div class="section-title-row">
-                                    <h3 class="section-title">Görsel Akıl Yürütme Ağacı (Thought Tree Graph)</h3>
+                                    <h3 class="section-title">Görsel Akıl Yürütme Ağacı (Düğümlere Tıklayabilirsiniz)</h3>
                                     <div class="tree-legend">
                                         <span class="legend-item"><span class="dot-legend dot-gold"></span> Altın Yol</span>
-                                        <span class="legend-item"><span class="dot-legend dot-green"></span> Geçerli Düğüm</span>
+                                        <span class="legend-item"><span class="dot-legend dot-green"></span> Geçerli Dal</span>
                                         <span class="legend-item"><span class="dot-legend dot-red"></span> Budanan Dal (Pruned)</span>
                                     </div>
                                 </div>
                                 <div class="tree-canvas-container" id="treeCanvasContainer">
-                                    <canvas id="mctsCanvas" width="600" height="420"></canvas>
+                                    <canvas id="mctsCanvas" width="600" height="320"></canvas>
+                                </div>
+
+                                <!-- NODE INSPECTOR DETAIL CARD -->
+                                <div class="node-inspector-box mt-3" id="nodeInspectorBox">
+                                    <div class="ins-title">🔍 Seçilen Düğüm: <span class="text-neon" id="insNodeId">Root (#0)</span></div>
+                                    <div class="ins-grid">
+                                        <div><strong>Durum:</strong> <span id="insNodeStatus" class="text-green">PASS</span></div>
+                                        <div><strong>Q-Değeri:</strong> <span id="insNodeQ" class="text-pearl">1.000</span></div>
+                                        <div><strong>Ziyaret Sayısı (N):</strong> <span id="insNodeN" class="text-pearl">12</span></div>
+                                        <div><strong>Doğrulayıcı Notu:</strong> <span id="insNodeNote" class="text-pearl">Başlangıç Durumu</span></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -557,7 +578,7 @@
                                         <strong class="text-neon" id="gemmGpuVal">170.84 TFLOP/s</strong>
                                     </div>
                                     <div class="progress-bar-bg">
-                                        <div class="progress-bar-fill fill-neon" style="width: 95%;"></div>
+                                        <div class="progress-bar-fill fill-neon" id="gemmGpuBar" style="width: 95%;"></div>
                                     </div>
                                 </div>
                                 <div class="bench-bar-item">
@@ -566,7 +587,7 @@
                                         <strong class="text-royal" id="gemmCpuVal">581.16 GFLOP/s</strong>
                                     </div>
                                     <div class="progress-bar-bg">
-                                        <div class="progress-bar-fill fill-royal" style="width: 25%;"></div>
+                                        <div class="progress-bar-fill fill-royal" id="gemmCpuBar" style="width: 25%;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -586,10 +607,10 @@
                                 <div class="bench-bar-item">
                                     <div class="bench-bar-label">
                                         <span>FlashAttention-2 (Fused SDPA)</span>
-                                        <strong class="text-neon">51.8x Hızlanma (0.009 ms)</strong>
+                                        <strong class="text-neon" id="flashSpeedVal">51.8x Hızlanma (0.009 ms)</strong>
                                     </div>
                                     <div class="progress-bar-bg">
-                                        <div class="progress-bar-fill fill-neon" style="width: 98%;"></div>
+                                        <div class="progress-bar-fill fill-neon" id="flashBar" style="width: 98%;"></div>
                                     </div>
                                 </div>
                                 <div class="bench-bar-item">
@@ -618,10 +639,10 @@
                                 <div class="bench-bar-item">
                                     <div class="bench-bar-label">
                                         <span>Adım Gecikmesi</span>
-                                        <strong class="text-pearl">0.119 ms / token</strong>
+                                        <strong class="text-pearl" id="pagedLatencyVal">0.119 ms / token</strong>
                                     </div>
                                     <div class="progress-bar-bg">
-                                        <div class="progress-bar-fill fill-purple" style="width: 92%;"></div>
+                                        <div class="progress-bar-fill fill-purple" id="pagedBar" style="width: 92%;"></div>
                                     </div>
                                 </div>
                                 <div class="bench-bar-item">
@@ -650,10 +671,10 @@
                                 <div class="bench-bar-item">
                                     <div class="bench-bar-label">
                                         <span>INT4 (W4A16) Sıkıştırma Oranı</span>
-                                        <strong class="text-neon">6.40x Tasarruf (%84.38 VRAM Azalımı)</strong>
+                                        <strong class="text-neon" id="quantRateVal">6.40x Tasarruf (%84.38 VRAM Azalımı)</strong>
                                     </div>
                                     <div class="progress-bar-bg">
-                                        <div class="progress-bar-fill fill-neon" style="width: 85%;"></div>
+                                        <div class="progress-bar-fill fill-neon" id="quantBar" style="width: 85%;"></div>
                                     </div>
                                 </div>
                                 <div class="bench-bar-item">
@@ -668,6 +689,16 @@
                             </div>
                             <div class="bench-note">NVIDIA Blackwell FP8 E4M3 ve INT4 register dequantization ile 186.89 GB/s bant genişliği.</div>
                         </div>
+                    </div>
+
+                    <!-- LIVE BENCHMARK OUTPUT CONSOLE -->
+                    <div class="glass-section mt-4">
+                        <div class="section-title-row">
+                            <h3 class="section-title">Canlı Kıyaslama Çıktı Günlüğü</h3>
+                            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('benchOutputLog').innerText = 'Kıyaslama günlüğü temizlendi.'">Günlüğü Temizle</button>
+                        </div>
+                        <pre class="json-viewer" id="benchOutputLog" style="height: 140px;">[SİSTEM] Kıyaslama Laboratuvarı Hazır. Donanım: NVIDIA RTX 5090 Blackwell sm_120 (24GB) & Intel Core Ultra 9 285HX.
+Yukarıdaki 'Çalıştır' veya 'Tüm Kıyaslamaları Koş' butonuna basarak canlı testleri başlatabilirsiniz.</pre>
                     </div>
                 </section>
 
@@ -688,9 +719,15 @@
                     <div class="agent-layout">
                         <div class="agent-left-config">
                             <div class="glass-section">
-                                <h3 class="section-title">Ajan Görevi</h3>
+                                <div class="section-title-row">
+                                    <h3 class="section-title">Ajan Görevi</h3>
+                                    <select class="form-select font-sm" onchange="app.setAgentGoalPreset(this.value)" style="width: auto;">
+                                        <option value="math">Hedef: Matematik & Dosya Yazma</option>
+                                        <option value="sys">Hedef: Sistem Bilgisi Raporu</option>
+                                        <option value="sec">Hedef: Path Traversal Güvenlik Testi</option>
+                                    </select>
+                                </div>
                                 <div class="form-group">
-                                    <label>Hedef / Görev Tanımı:</label>
                                     <input type="text" id="agentGoalInput" class="form-input" value="25 * 16 işlemini hesapla, sonucu 'result.txt' dosyasına yaz ve doğrula.">
                                 </div>
 
@@ -702,9 +739,26 @@
                                     <li><span class="tool-badge">system_info</span> Donanım ve işletim sistemi bilgisi alır</li>
                                 </ul>
 
-                                <div class="sandbox-security-box mt-4">
+                                <!-- SANDBOX VIRTUAL FILE EXPLORER -->
+                                <h4 class="mt-4 mb-2 text-pearl">Kum Havuzu Dosyaları (Tıklayıp Görüntüleyin):</h4>
+                                <div class="sandbox-files-list">
+                                    <div class="sandbox-file-item" onclick="app.viewSandboxFile('result.txt')">
+                                        <span>📄 result.txt</span>
+                                        <span class="font-sm text-muted">3 bytes</span>
+                                    </div>
+                                    <div class="sandbox-file-item" onclick="app.viewSandboxFile('sysinfo.json')">
+                                        <span>📄 sysinfo.json</span>
+                                        <span class="font-sm text-muted">142 bytes</span>
+                                    </div>
+                                    <div class="sandbox-file-item" onclick="app.viewSandboxFile('model_spec.aic')">
+                                        <span>📄 model_spec.aic</span>
+                                        <span class="font-sm text-muted">512 bytes</span>
+                                    </div>
+                                </div>
+
+                                <div class="sandbox-security-box mt-3">
                                     <div class="sec-title">🛡️ Kum Havuzu Güvenlik Koruması</div>
-                                    <div class="sec-desc">Dizin atlatma (path traversal <code>../</code>) saldırıları kanonikleştirilerek engellenir. Dosya işlemleri yalnızca yerel sandbox dizininde geçerlidir.</div>
+                                    <div class="sec-desc">Dizin atlatma (path traversal <code>../</code>) saldırıları kanonikleştirilerek engellenir.</div>
                                 </div>
                             </div>
                         </div>
@@ -716,6 +770,7 @@
                                     <span class="term-dot yellow"></span>
                                     <span class="term-dot green"></span>
                                     <span class="term-title">ReAct Ajan Yörünge Günlüğü (Thought-Action-Observation)</span>
+                                    <button class="btn btn-secondary btn-sm" onclick="app.clearAgentTerminal()" style="margin-left: auto;">Temizle</button>
                                 </div>
                                 <div class="terminal-body" id="agentTerminalBody">
                                     <div class="term-line text-muted">[SİSTEM] ReAct Motoru Hazır. Dizin: ./sandbox_workspace</div>
@@ -788,7 +843,10 @@
 
                         <!-- LIVE REQUEST TRAFFIC LOG -->
                         <div class="glass-section">
-                            <h3 class="section-title">Canlı İstek Trafiği Günlüğü (Request Log)</h3>
+                            <div class="section-title-row">
+                                <h3 class="section-title">Canlı İstek Trafiği Günlüğü (Request Log)</h3>
+                                <button class="btn btn-secondary btn-sm" onclick="document.getElementById('requestLogContainer').innerHTML = ''">Temizle</button>
+                            </div>
                             <div class="request-log-container" id="requestLogContainer">
                                 <div class="req-log-entry">
                                     <span class="req-method get">GET</span>
@@ -820,11 +878,16 @@
                     <div class="panel-header">
                         <div>
                             <h2 class="panel-title">25-Aşama Mimari & Tam Dokümantasyon</h2>
-                            <p class="panel-desc">Tüm 25 aşama sıfır dış bağımlılıkla tamamlanmış ve 169 birim testi %100 geçmiştir.</p>
+                            <p class="panel-desc">Tüm 25 aşama sıfır dış bağımlılıkla tamamlanmış ve 169 birim testi %100 geçmiştir. (Ayrıntılar için karta tıklayın)</p>
                         </div>
                         <div class="panel-actions">
                             <button class="btn btn-secondary" onclick="window.open('https://github.com/HexStereo/AutonomousAICore', '_blank')"><span class="btn-icon">🔗</span> GitHub Deposu</button>
                         </div>
+                    </div>
+
+                    <!-- SEARCH & FILTER CHIPS -->
+                    <div class="docs-filter-bar mb-3">
+                        <input type="text" id="stageSearchInput" class="form-input font-sm" placeholder="Aşamalarda ara (örn: FlashAttention, MoE, Autograd)..." oninput="app.filterStages(this.value)">
                     </div>
 
                     <div class="stages-timeline-grid" id="stagesContainer">
@@ -840,14 +903,14 @@
             <div class="status-left">
                 <span class="status-item"><span class="status-dot green"></span> Sistem: Hazır</span>
                 <span class="status-divider">|</span>
-                <span class="status-item">Aygıt: NVIDIA RTX 5090 Blackwell (sm_120)</span>
+                <span class="status-item" id="statusDevice">Aygıt: NVIDIA RTX 5090 Blackwell (sm_120)</span>
                 <span class="status-divider">|</span>
                 <span class="status-item">CPU: 24 Threads AVX2+FMA</span>
             </div>
             <div class="status-right">
                 <span class="status-item">Çekirdek: Modern C++20</span>
                 <span class="status-divider">|</span>
-                <span class="status-item text-green">169 / 169 Tests PASS</span>
+                <span class="status-item text-green" onclick="app.runAllTests()" style="cursor:pointer;" title="Testleri Çalıştır">169 / 169 Tests PASS</span>
                 <span class="status-divider">|</span>
                 <span class="status-item">Port: 8080 (REST / SSE)</span>
             </div>
@@ -855,7 +918,7 @@
 
     </div>
 
-    <!-- MODAL: HAKKINDA (ABOUT) -->
+    <!-- MODAL 1: HAKKINDA (ABOUT) -->
     <div class="modal-overlay" id="aboutModal">
         <div class="modal-content card-purple-glow">
             <div class="modal-header">
@@ -878,6 +941,95 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" onclick="app.closeModal('aboutModal')">Tamam</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: DONANIM PROFiLi (HARDWARE) -->
+    <div class="modal-overlay" id="hardwareModal">
+        <div class="modal-content card-purple-glow" style="width: 580px;">
+            <div class="modal-header">
+                <h3>Fiziksel Donanım Telemetrisi</h3>
+                <button class="modal-close-btn" onclick="app.closeModal('hardwareModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="hw-modal-grid">
+                    <div class="hw-card-inner">
+                        <div class="text-neon font-bold">NVIDIA GeForce RTX 5090 Laptop GPU</div>
+                        <div class="font-sm text-pearl">Mimari: Blackwell sm_120 • 82 SM</div>
+                        <div class="font-sm text-pearl">Toplam VRAM: 23.86 GB GDDR7 (22.61 GB Boş)</div>
+                        <div class="font-sm text-green">Zirve GEMM Başarımı: 170.84 TFLOP/s</div>
+                    </div>
+                    <div class="hw-card-inner mt-2">
+                        <div class="text-royal font-bold">Intel(R) Core(TM) Ultra 9 285HX</div>
+                        <div class="font-sm text-pearl">24 İş Parçacığı • AVX2 + FMA SIMD</div>
+                        <div class="font-sm text-pearl">Sistem RAM: 95.4 GB DDR5</div>
+                        <div class="font-sm text-green">Zirve CPU GEMM: 581.16 GFLOP/s</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="app.closeModal('hardwareModal')">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: TEST RUNNER (169 TESTS) -->
+    <div class="modal-overlay" id="testRunnerModal">
+        <div class="modal-content card-purple-glow" style="width: 620px;">
+            <div class="modal-header">
+                <h3>AIC Test Paketi (169 / 169 Birim Testi)</h3>
+                <button class="modal-close-btn" onclick="app.closeModal('testRunnerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="test-progress-bar-wrap mb-3">
+                    <div class="progress-bar-bg" style="height: 10px;">
+                        <div class="progress-bar-fill fill-green" id="testModalBar" style="width: 100%;"></div>
+                    </div>
+                    <div class="d-flex justify-between font-sm mt-1">
+                        <span id="testModalStatus" class="text-green font-bold">169 / 169 TEST GEÇTİ (%100 PASS)</span>
+                        <span class="text-pearl-muted">Süre: 1234.25 ms</span>
+                    </div>
+                </div>
+                <div class="test-logs-scroll" id="testModalLogs">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="app.reRunTestsInModal()">Yeniden Koş</button>
+                <button class="btn btn-primary" onclick="app.closeModal('testRunnerModal')">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: AŞAMA DETAYI (STAGE DETAIL) -->
+    <div class="modal-overlay" id="stageDetailModal">
+        <div class="modal-content card-purple-glow" style="width: 650px;">
+            <div class="modal-header">
+                <h3 id="stageModalTitle">Aşama Detayları</h3>
+                <button class="modal-close-btn" onclick="app.closeModal('stageDetailModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="stageModalBody">
+                <!-- Injected dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="app.closeModal('stageDetailModal')">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: SANDBOX DOSYA GÖRÜNTÜLEYİCİ -->
+    <div class="modal-overlay" id="sandboxFileModal">
+        <div class="modal-content card-purple-glow" style="width: 580px;">
+            <div class="modal-header">
+                <h3 id="sandboxFileName">result.txt</h3>
+                <button class="modal-close-btn" onclick="app.closeModal('sandboxFileModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <pre class="json-viewer" id="sandboxFileContent" style="height: 200px;"></pre>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="app.closeModal('sandboxFileModal')">Kapat</button>
             </div>
         </div>
     </div>
